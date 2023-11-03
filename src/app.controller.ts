@@ -1,20 +1,36 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AppService } from './app.service';
+import { AccountStoreService } from './account-store/account-store.service';
+import { AccountDto } from './accountDto';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('/credit-cards')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+  constructor(
+    private readonly appService: AppService,
+    private readonly accountStoreService: AccountStoreService,
+  ) {}
 
   @Post()
-  createAccount() {}
+  async createAccount(@Body() newAccount: AccountDto) {
+    await this.accountStoreService.save(newAccount);
+    return '';
+  }
 
   @Get()
-  listAccounts() {}
+  async listAccounts() {
+    return await this.accountStoreService.getAll();
+  }
 
   @Get('/:id')
   getAccount(@Param('id') id: string) {}
