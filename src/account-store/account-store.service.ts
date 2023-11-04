@@ -30,6 +30,7 @@ export class AccountStoreService {
     return this.repo.delete(id);
   }
 
-  charge(cardNo: string) {}
-  credit(cardNo: string) {}
+  getByCardNo(cardNo: string) {
+    return this.repo.findOneBy({ cardNo });
+  }
 }

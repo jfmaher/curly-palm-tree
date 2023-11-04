@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AccountStoreService } from './account-store/account-store.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PaymentGatewayService } from './payment-gateway/payment-gateway.service';
 import Account from './account-store/Account';
 
 @Module({
@@ -15,6 +15,6 @@ import Account from './account-store/Account';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, AccountStoreService],
+  providers: [AccountStoreService, PaymentGatewayService],
 })
 export class AppModule {}

@@ -16,4 +16,7 @@ export default class Account {
 
   @Column('int')
   balance: number;
+
+  @Column('text')
+  cardNo: string;
 }

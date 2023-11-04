@@ -11,16 +11,16 @@ import {
   Put,
   UseInterceptors,
 } from '@nestjs/common';
-import { AppService } from './app.service';
 import { AccountStoreService } from './account-store/account-store.service';
 import { NewAccountDto } from './newAccountDto';
+import { PaymentGatewayService } from './payment-gateway/payment-gateway.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('/credit-cards')
 export class AppController {
   constructor(
-    private readonly appService: AppService,
     private readonly accountStoreService: AccountStoreService,
+    private readonly paymentGatewayService: PaymentGatewayService,
   ) {}
 
   @Post()
@@ -54,8 +54,29 @@ export class AppController {
   }
 
   @Post('/:cardNumber/charge')
-  chargeAccount(@Param('cardNumber') cardNumber: string) {}
+  async chargeAccount(
+    @Param('cardNumber') cardNumber: string,
+    @Body('amount', ParseIntPipe) amount: number,
+  ) {
+    const account = await this.accountStoreService.getByCardNo(cardNumber);
+
+    if (account.balance + amount > account.limit) throw new Error();
+
+    try {
+      await this.paymentGatewayService.payment();
+    } catch {
+      throw Error();
+    }
+    account.balance += amount;
+    return this.accountStoreService.update(account.id, account);
+  }
 
   @Post('/:cardNumber/credit')
-  creditAccount(@Param('cardNumber') cardNumber: string) {}
+  async creditAccount(
+    @Param('cardNumber') cardNumber: string,
+    @Body('amount', ParseIntPipe) amount: number,
+  ) {
+    const account = await this.accountStoreService.getByCardNo(cardNumber);
+    account.balance -= amount;
+  }
 }
