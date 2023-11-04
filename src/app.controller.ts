@@ -5,13 +5,15 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Put,
   UseInterceptors,
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AccountStoreService } from './account-store/account-store.service';
-import { AccountDto } from './accountDto';
+import { NewAccountDto } from './newAccountDto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('/credit-cards')
@@ -22,7 +24,7 @@ export class AppController {
   ) {}
 
   @Post()
-  async createAccount(@Body() newAccount: AccountDto) {
+  async createAccount(@Body() newAccount: NewAccountDto) {
     await this.accountStoreService.save(newAccount);
     return '';
   }
@@ -33,13 +35,23 @@ export class AppController {
   }
 
   @Get('/:id')
-  getAccount(@Param('id') id: string) {}
+  async getAccount(@Param('id', ParseIntPipe) id: number) {
+    return await this.accountStoreService.getOne(id);
+  }
 
   @Put('/:id')
-  updateAccount(@Param('id') id: string) {}
+  @Patch('/:id')
+  updateAccount(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() newAccount: NewAccountDto,
+  ) {
+    return this.accountStoreService.update(id, newAccount);
+  }
 
   @Delete('/:id')
-  deleteAccount(@Param('id') id: string) {}
+  deleteAccount(@Param('id', ParseIntPipe) id: number) {
+    return this.accountStoreService.delete(id);
+  }
 
   @Post('/:cardNumber/charge')
   chargeAccount(@Param('cardNumber') cardNumber: string) {}

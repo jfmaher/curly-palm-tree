@@ -1,6 +1,4 @@
-export type AccountDto = {
-  id: number;
-
+export type NewAccountDto = {
   name: string;
 
   accountIdentifier: string;
