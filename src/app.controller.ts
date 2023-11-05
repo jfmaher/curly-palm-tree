@@ -14,6 +14,7 @@ import {
 import { AccountStoreService } from './account-store/account-store.service';
 import { NewAccountDto } from './newAccountDto';
 import { PaymentGatewayService } from './payment-gateway/payment-gateway.service';
+import errors from './errors';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('/credit-cards')
@@ -41,11 +42,15 @@ export class AppController {
 
   @Put('/:id')
   @Patch('/:id')
-  updateAccount(
+  async updateAccount(
     @Param('id', ParseIntPipe) id: number,
     @Body() newAccount: NewAccountDto,
   ) {
-    return this.accountStoreService.update(id, newAccount);
+    const account = await this.accountStoreService.getOne(id);
+    if (account === null) {
+      throw new Error(errors.AccountDoesNotExist);
+    }
+    return this.accountStoreService.save({ ...newAccount, id });
   }
 
   @Delete('/:id')
@@ -58,17 +63,22 @@ export class AppController {
     @Param('cardNumber') cardNumber: string,
     @Body('amount', ParseIntPipe) amount: number,
   ) {
+    if (amount < 0) throw new Error(errors.NegativeChargeAmount);
+
     const account = await this.accountStoreService.getByCardNo(cardNumber);
 
-    if (account.balance + amount > account.limit) throw new Error();
+    if (account === null) throw new Error(errors.AccountDoesNotExist);
+
+    if (account.balance + amount > account.limit)
+      throw new Error(errors.LimitReached);
 
     try {
       await this.paymentGatewayService.payment();
     } catch {
-      throw Error();
+      throw Error(errors.PaymentGatewayFailure);
     }
     account.balance += amount;
-    return this.accountStoreService.update(account.id, account);
+    return this.accountStoreService.save(account);
   }
 
   @Post('/:cardNumber/credit')

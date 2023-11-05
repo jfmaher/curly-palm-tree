@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeepPartial, Repository } from 'typeorm';
 import Account from './Account';
 import { NewAccountDto } from '../newAccountDto';
+import errors from '../errors';
 
 @Injectable()
 export class AccountStoreService {
   protected repo: Repository<Account>;
+
   constructor(private readonly db: DataSource) {
     this.repo = this.db.getRepository(Account);
   }
 
-  save(account: NewAccountDto) {
-    return this.repo.save(account);
+  save(account: DeepPartial<Account>) {
+    return this.repo.save(this.repo.create(account));
   }
 
   getAll() {
@@ -20,10 +22,6 @@ export class AccountStoreService {
 
   getOne(id: number) {
     return this.repo.findOneBy({ id });
-  }
-
-  update(id: number, newAccount: NewAccountDto) {
-    return this.repo.save({ ...newAccount, id });
   }
 
   delete(id: number) {
