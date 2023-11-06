@@ -10,9 +10,10 @@ import {
   Post,
   Put,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AccountStoreService } from './account-store/account-store.service';
-import { NewAccountDto } from './newAccountDto';
+import NewAccountDto from './newAccountDto';
 import { PaymentGatewayService } from './payment-gateway/payment-gateway.service';
 import errors from './errors';
 import { CardNoPipe } from './card-no/card-no.pipe';
@@ -26,7 +27,7 @@ export class AppController {
   ) {}
 
   @Post()
-  async createAccount(@Body() newAccount: NewAccountDto) {
+  async createAccount(@Body(ValidationPipe) newAccount: NewAccountDto) {
     await this.accountStoreService.save(newAccount);
     return '';
   }
@@ -45,7 +46,7 @@ export class AppController {
   @Patch('/:id')
   async updateAccount(
     @Param('id', ParseIntPipe) id: number,
-    @Body() newAccount: NewAccountDto,
+    @Body(ValidationPipe) newAccount: NewAccountDto,
   ) {
     const account = await this.accountStoreService.getOne(id);
     if (account === null) {

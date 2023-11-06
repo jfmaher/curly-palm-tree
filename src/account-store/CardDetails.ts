@@ -1,14 +1,20 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import Account from './Account';
 
 @Entity()
 export class CardDetails {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @OneToOne(() => Account, 'cardDetails')
   @JoinColumn()
-  account: Account;
+  account?: Account;
 
   @Column('text')
   cardNo: string;
@@ -17,5 +23,10 @@ export class CardDetails {
   initializationVectors: Uint8Array;
 
   @Column('text')
-  cardType: string;
+  cardType: Type;
+}
+
+export enum Type {
+  MASTERCARD = 'MASTERCARD',
+  VISA = 'VISA',
 }

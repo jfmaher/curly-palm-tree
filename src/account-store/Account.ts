@@ -1,9 +1,9 @@
-import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CardDetails } from './CardDetails';
 
 @Entity()
 export default class Account {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column('text')
@@ -16,5 +16,5 @@ export default class Account {
   balance: number;
 
   @OneToOne(() => CardDetails, 'account', { cascade: true })
-  cardDetails: CardDetails;
+  cardDetails?: CardDetails;
 }

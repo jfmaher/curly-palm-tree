@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AccountStoreService } from './account-store.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Account from './Account';
-import { CardDetails } from './CardDetails';
+import { CardDetails, Type } from './CardDetails';
 import { DataSource } from 'typeorm';
 import { EncryptionModuleModule } from '../encryption-module/encryption-module.module';
 import { EncryptionService } from '../encryption-module/encryption/encryption.service';
@@ -20,6 +20,7 @@ describe('AccountStoreService', () => {
           database: 'testDB.sql',
           entities: [Account, CardDetails],
           synchronize: true,
+          logging: 'all',
         }),
         EncryptionModuleModule,
       ],
@@ -49,6 +50,7 @@ describe('AccountStoreService', () => {
     account.name = 'test';
     account.cardDetails = new CardDetails();
     account.cardDetails.cardNo = `${cardNo}`;
+    account.cardDetails.cardType = Type.MASTERCARD;
 
     const account1 = await service.save(account);
 
@@ -77,6 +79,7 @@ describe('AccountStoreService', () => {
     account.name = 'test';
     account.cardDetails = new CardDetails();
     account.cardDetails.cardNo = `${cardNo}`;
+    account.cardDetails.cardType = Type.MASTERCARD;
 
     const account1 = await service.save(account);
 

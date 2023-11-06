@@ -20,7 +20,11 @@ export class AccountStoreService {
       const { iv, encryption } = this.encryptionService.encrypt(
         account.cardDetails.cardNo,
       );
-      account.cardDetails = { initializationVectors: iv, cardNo: encryption };
+      account.cardDetails = {
+        ...account.cardDetails,
+        initializationVectors: iv,
+        cardNo: encryption,
+      };
     }
     return this.repo.save(this.repo.create(account));
   }

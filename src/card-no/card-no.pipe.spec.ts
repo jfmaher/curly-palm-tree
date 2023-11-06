@@ -10,10 +10,10 @@ describe('CardNoPipe', () => {
   });
 
   it('fails for non numeric', () => {
-    expect(new CardNoPipe().transform('sakdljfoeiw'));
+    expect(() => new CardNoPipe().transform('sakdljfoeiw')).toThrow();
   });
 
   it('fails for wrong length', () => {
-    expect(new CardNoPipe().transform('40128888888'));
+    expect(() => new CardNoPipe().transform('40128888888')).toThrow();
   });
 });
