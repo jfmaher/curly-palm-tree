@@ -9,9 +9,6 @@ export default class Account {
   @Column('text')
   name: string;
 
-  @Column('text')
-  accountIdentifier: string;
-
   @Column('int')
   limit: number;
 
