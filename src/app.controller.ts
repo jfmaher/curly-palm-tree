@@ -73,7 +73,7 @@ export class AppController {
       throw new Error(errors.LimitReached);
 
     try {
-      await this.paymentGatewayService.payment();
+      await this.paymentGatewayService.payment(account.cardNo);
     } catch {
       throw Error(errors.PaymentGatewayFailure);
     }
@@ -88,5 +88,9 @@ export class AppController {
   ) {
     const account = await this.accountStoreService.getByCardNo(cardNumber);
     account.balance -= amount;
+
+    if (account.balance < 0) throw new Error(errors.AttemptingToOverpayBalance);
+
+    return this.accountStoreService.save(account);
   }
 }

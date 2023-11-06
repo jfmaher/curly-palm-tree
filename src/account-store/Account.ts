@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import { CardDetails } from './CardDetails';
 
 @Entity()
 export default class Account {
@@ -17,6 +18,6 @@ export default class Account {
   @Column('int')
   balance: number;
 
-  @Column('text')
-  cardNo: string;
+  @OneToOne(() => CardDetails, 'account', { cascade: true })
+  cardDetails: CardDetails;
 }

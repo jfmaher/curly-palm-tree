@@ -2,5 +2,5 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PaymentGatewayService {
-  async payment(): Promise<any> {}
+  async payment(...args: any[]): Promise<any> {}
 }

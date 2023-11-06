@@ -109,7 +109,27 @@ describe('AppController', () => {
   });
 
   describe('credit', () => {
-    it.todo('payment within balance');
-    it.todo('payment overpays balance');
+    it('payment within balance', () => {
+      accountStoreServiceStub.getByCardNo.mockImplementationOnce(() => ({
+        id: 42,
+        balance: 100,
+        limit: 100,
+      }));
+      paymentGatewayServiceStub.payment.mockRejectedValueOnce(new Error());
+      return expect(
+        appController.creditAccount('1234', 50),
+      ).resolves.toMatchObject({ balance: 50 });
+    });
+    it('payment overpays balance', () => {
+      accountStoreServiceStub.getByCardNo.mockImplementationOnce(() => ({
+        id: 42,
+        balance: 33,
+        limit: 100,
+      }));
+      paymentGatewayServiceStub.payment.mockRejectedValueOnce(new Error());
+      return expect(appController.creditAccount('1234', 50)).rejects.toThrow(
+        errors.AttemptingToOverpayBalance,
+      );
+    });
   });
 });
