@@ -15,6 +15,7 @@ import { AccountStoreService } from './account-store/account-store.service';
 import { NewAccountDto } from './newAccountDto';
 import { PaymentGatewayService } from './payment-gateway/payment-gateway.service';
 import errors from './errors';
+import { CardNoPipe } from './card-no/card-no.pipe';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('/credit-cards')
@@ -60,7 +61,7 @@ export class AppController {
 
   @Post('/:cardNumber/charge')
   async chargeAccount(
-    @Param('cardNumber') cardNumber: string,
+    @Param('cardNumber', CardNoPipe) cardNumber: string,
     @Body('amount', ParseIntPipe) amount: number,
   ) {
     if (amount < 0) throw new Error(errors.NegativeChargeAmount);
@@ -83,7 +84,7 @@ export class AppController {
 
   @Post('/:cardNumber/credit')
   async creditAccount(
-    @Param('cardNumber') cardNumber: string,
+    @Param('cardNumber', CardNoPipe) cardNumber: string,
     @Body('amount', ParseIntPipe) amount: number,
   ) {
     const account = await this.accountStoreService.getByCardNo(cardNumber);
