@@ -56,7 +56,7 @@ export class AppController {
   @Put('/:id')
   async updateAccount(
     @Param('id', ParseIntPipe) id: number,
-    @Body(ValidationPipe) newAccount: NewAccountDto,
+    @Body(new ValidationPipe({ whitelist: true })) newAccount: NewAccountDto,
   ) {
     const account = await this.accountStoreService.getOne(id);
     if (account === null) {
@@ -108,6 +108,8 @@ export class AppController {
     @Param('cardNumber', CardNoPipe) cardNumber: string,
     @Body('amount', ParseIntPipe) amount: number,
   ) {
+    if (amount < 0) throw new BadRequestException(errors.NegativeChargeAmount);
+
     const account = await this.accountStoreService.getByCardNo(cardNumber);
     account.balance -= amount;
 

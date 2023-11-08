@@ -138,5 +138,16 @@ describe('AppController', () => {
         errors.AttemptingToOverpayBalance,
       );
     });
+    it('cannot credit a negative amount', () => {
+      accountStoreServiceStub.getByCardNo.mockImplementationOnce(() => ({
+        id: 42,
+        balance: 0,
+        limit: 45,
+        cardDetails: { cardNo: '4012888888881881' },
+      }));
+      return expect(appController.creditAccount('1234', -50)).rejects.toThrow(
+        errors.NegativeChargeAmount,
+      );
+    });
   });
 });
