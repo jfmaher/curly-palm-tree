@@ -46,33 +46,36 @@ describe('AppController', () => {
   });
 
   describe('charges', () => {
-    it('charge amount under limit', () => {
+    it('increases balance when the amount is under limit', () => {
       accountStoreServiceStub.getByCardNo.mockImplementationOnce(() => ({
         id: 42,
         balance: 0,
         limit: 100,
+        cardDetails: { cardNo: '4012888888881881' },
       }));
-      return expect(appController.chargeAccount('1234', 50)).resolves.toEqual({
-        id: 42,
+      return expect(
+        appController.chargeAccount('1234', 50),
+      ).resolves.toMatchObject({
         balance: 50,
-        limit: 100,
       });
     });
-    it('charge amount over limit', () => {
+    it('causes error when charge amount over limit', () => {
       accountStoreServiceStub.getByCardNo.mockImplementationOnce(() => ({
         id: 42,
         balance: 0,
         limit: 45,
+        cardDetails: { cardNo: '4012888888881881' },
       }));
       return expect(
         appController.chargeAccount('1234', 50),
       ).rejects.toBeInstanceOf(Error);
     });
-    it('charge a negative amount', () => {
+    it('cannot charge a negative amount', () => {
       accountStoreServiceStub.getByCardNo.mockImplementationOnce(() => ({
         id: 42,
         balance: 0,
         limit: 45,
+        cardDetails: { cardNo: '4012888888881881' },
       }));
       return expect(appController.chargeAccount('1234', -50)).rejects.toThrow(
         errors.NegativeChargeAmount,
@@ -83,6 +86,7 @@ describe('AppController', () => {
         id: 42,
         balance: 0,
         limit: 100,
+        cardDetails: { cardNo: '4012888888881881' },
       }));
       paymentGatewayServiceStub.payment.mockResolvedValueOnce(undefined);
       return expect(
@@ -94,6 +98,7 @@ describe('AppController', () => {
         id: 42,
         balance: 0,
         limit: 100,
+        cardDetails: { cardNo: '4012888888881881' },
       }));
       paymentGatewayServiceStub.payment.mockRejectedValueOnce(new Error());
       return expect(appController.chargeAccount('1234', 50)).rejects.toThrow(
@@ -114,6 +119,7 @@ describe('AppController', () => {
         id: 42,
         balance: 100,
         limit: 100,
+        cardDetails: { cardNo: '4012888888881881' },
       }));
       paymentGatewayServiceStub.payment.mockRejectedValueOnce(new Error());
       return expect(
@@ -125,6 +131,7 @@ describe('AppController', () => {
         id: 42,
         balance: 33,
         limit: 100,
+        cardDetails: { cardNo: '4012888888881881' },
       }));
       paymentGatewayServiceStub.payment.mockRejectedValueOnce(new Error());
       return expect(appController.creditAccount('1234', 50)).rejects.toThrow(

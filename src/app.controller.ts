@@ -84,7 +84,7 @@ export class AppController {
       throw new Error(errors.LimitReached);
 
     try {
-      await this.paymentGatewayService.payment(account.cardNo);
+      await this.paymentGatewayService.payment(account.cardDetails.cardNo);
     } catch {
       throw Error(errors.PaymentGatewayFailure);
     }

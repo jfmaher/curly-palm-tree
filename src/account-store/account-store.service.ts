@@ -3,6 +3,7 @@ import { DataSource, DeepPartial, Repository } from 'typeorm';
 import Account from './Account';
 import { EncryptionService } from '../encryption-module/encryption/encryption.service';
 import { CardDetails } from './CardDetails';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AccountStoreService {
@@ -20,10 +21,16 @@ export class AccountStoreService {
       const { iv, encryption } = this.encryptionService.encrypt(
         account.cardDetails.cardNo,
       );
+
+      const hash = crypto
+        .createHash('sha256')
+        .update(account.cardDetails.cardNo)
+        .digest('base64');
       account.cardDetails = {
         ...account.cardDetails,
         initializationVectors: iv,
         cardNo: encryption,
+        hash,
       };
     }
     return this.repo.save(this.repo.create(account));
@@ -42,11 +49,19 @@ export class AccountStoreService {
   }
 
   async getByCardNo(cardNo: string) {
-    const { iv, encryption } = this.encryptionService.encrypt(cardNo);
+    const hash = crypto.createHash('sha256').update(cardNo).digest('base64');
     const cardDetails = await this.db.manager.findOne(CardDetails, {
-      where: { cardNo: encryption },
+      where: { hash },
       relations: { account: true },
     });
-    return { ...cardDetails.account, cardNo };
+
+    cardDetails.cardNo = this.encryptionService.decrypt(
+      cardDetails.initializationVectors,
+      cardDetails.cardNo,
+    );
+    const account = cardDetails.account;
+    account.cardDetails = cardDetails;
+    debugger;
+    return account;
   }
 }

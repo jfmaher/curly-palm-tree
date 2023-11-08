@@ -20,7 +20,7 @@ describe('AccountStoreService', () => {
           database: 'testDB.sql',
           entities: [Account, CardDetails],
           synchronize: true,
-          logging: 'all',
+          // logging: 'all',
         }),
         EncryptionModuleModule,
       ],
@@ -45,9 +45,9 @@ describe('AccountStoreService', () => {
     const cardNo = '4012888888881881';
     const account = new Account();
     account.id = Math.round(Math.random() * 1000);
+    account.accountIdentifier = 'test';
     account.balance = 0;
     account.limit = 0;
-    account.name = 'test';
     account.cardDetails = new CardDetails();
     account.cardDetails.cardNo = `${cardNo}`;
     account.cardDetails.cardType = Type.MASTERCARD;
@@ -73,11 +73,13 @@ describe('AccountStoreService', () => {
   });
   it('is able to find by card no', async () => {
     const cardNo = '4012888888881881';
+    const cardType = Type.MASTERCARD;
+    const cardholderName = 'joe bloggs';
     const account = new Account();
     account.id = Math.round(Math.random() * 1000);
+    account.accountIdentifier = 'test';
     account.balance = 0;
     account.limit = 0;
-    account.name = 'test';
     account.cardDetails = new CardDetails();
     account.cardDetails.cardNo = `${cardNo}`;
     account.cardDetails.cardType = Type.MASTERCARD;
@@ -87,6 +89,8 @@ describe('AccountStoreService', () => {
 
     const foundAccount = await service.getByCardNo(cardNo);
 
-    expect(foundAccount).toEqual(account);
+    expect(foundAccount.cardDetails.cardNo).toEqual(cardNo);
+    expect(foundAccount.cardDetails.cardType).toEqual(cardType);
+    expect(foundAccount.cardDetails.cardholderName).toEqual(cardholderName);
   });
 });

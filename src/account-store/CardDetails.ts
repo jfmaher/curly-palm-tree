@@ -27,6 +27,9 @@ export class CardDetails {
 
   @Column('text')
   cardType: Type;
+
+  @Column('text')
+  hash: string;
 }
 
 export enum Type {
