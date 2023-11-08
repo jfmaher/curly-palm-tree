@@ -41,12 +41,30 @@ I did this exercise using [Nest](https://nestjs.com/) working from a new project
 - There are some gaps in the testing
   - ORM functions that have facades are not tested.
   - Not all the endpoints and their validations are tested.
+- There is no dependencies outside of this project so there is nothing else required to run end to end tests.
 
-## Installation
+## Details for running and testing.
+
+#### Installation
+
+The app should be relatively easy to install and run. SQLite was chosen for this purpose and it is another reason for trying to avoid user sign ins or keys.
 
 ```bash
 $ npm install
 ```
+
+#### Usage
+
+The API is as specified with the addition of DTOs used in the POST and PUT requests.
+
+- Creating and updating accounts requires a JSON body of `NewAccountDto`
+- Charging and crediting an account uses a JSON body that has the property `"amount"` whose value is a non-negative integer.
+
+> There are samples in `rest-api_1.http` which are also runnable in the JetBrains http client. At least that is where I made and ran them.
+
+There is a sample key for the aes256 encryption in the root directory that is currently loaded in the encryption module.
+
+
 
 ## Running the app
 
