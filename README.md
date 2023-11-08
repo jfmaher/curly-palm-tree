@@ -1,5 +1,3 @@
-## Apata
-
 I did this exercise using [Nest](https://nestjs.com/) working from a new project created using it's cli. 
 
 #### Data Storage
