@@ -77,6 +77,15 @@ describe('AppController (e2e)', () => {
   it.todo('PUT /credit-cards/:id');
   it.todo('PATCH /credit-cards/:id');
   it.todo('DELETE /credit-cards/:id');
-  it.todo('POST /credit-cards/:cardNo/charge');
+  describe('POST /credit-cards/:cardNo/charge', () => {
+    it('it returns correct error code (400) for negative amount', (done) => {
+      request(app.getHttpServer())
+        .post('/credit-cards/4012888888881881/charge')
+        .send({
+          amount: -49,
+        })
+        .expect(400, done);
+    });
+  });
   it.todo('POST /credit-cards/:cardNo/credit');
 });

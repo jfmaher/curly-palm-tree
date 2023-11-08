@@ -1,9 +1,12 @@
 import {
+  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
+  InternalServerErrorException,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -59,7 +62,7 @@ export class AppController {
   ) {
     const account = await this.accountStoreService.getOne(id);
     if (account === null) {
-      throw new Error(errors.AccountDoesNotExist);
+      throw new NotFoundException(errors.AccountDoesNotExist);
     }
     return this.accountStoreService.save({ ...newAccount, id });
   }
@@ -74,19 +77,20 @@ export class AppController {
     @Param('cardNumber', CardNoPipe) cardNumber: string,
     @Body('amount', ParseIntPipe) amount: number,
   ) {
-    if (amount < 0) throw new Error(errors.NegativeChargeAmount);
+    if (amount < 0) throw new BadRequestException(errors.NegativeChargeAmount);
 
     const account = await this.accountStoreService.getByCardNo(cardNumber);
 
-    if (account === null) throw new Error(errors.AccountDoesNotExist);
+    if (account === null)
+      throw new NotFoundException(errors.AccountDoesNotExist);
 
     if (account.balance + amount > account.limit)
-      throw new Error(errors.LimitReached);
+      throw new BadRequestException(errors.LimitReached);
 
     try {
       await this.paymentGatewayService.payment(account.cardDetails.cardNo);
     } catch {
-      throw Error(errors.PaymentGatewayFailure);
+      throw new InternalServerErrorException(errors.PaymentGatewayFailure);
     }
     account.balance += amount;
     return this.accountStoreService.save(account);
@@ -100,7 +104,8 @@ export class AppController {
     const account = await this.accountStoreService.getByCardNo(cardNumber);
     account.balance -= amount;
 
-    if (account.balance < 0) throw new Error(errors.AttemptingToOverpayBalance);
+    if (account.balance < 0)
+      throw new BadRequestException(errors.AttemptingToOverpayBalance);
 
     return this.accountStoreService.save(account);
   }
