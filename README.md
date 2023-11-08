@@ -1,30 +1,46 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+## Apata
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+I did this exercise using [Nest](https://nestjs.com/) working from a new project created using it's cli. 
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+#### Data Storage
 
-## Description
+- The card details are stored in a difference table to the accounts. This is to make accidental returning of this information less likely.
+- Symmetric encryption was used so that the card holder information is persisted. This may look redundant because there is also an un salted hash for looking up the details for the /charge and /credit endpoints.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+#### Endpoints
+
+- The endpoints are together in `src/app.controller.ts`
+- They do not have security on them. I spent too much time on learning about encryption.
+  - This could be done using user/password sessions and relating them to particular accounts.
+
+#### Validation
+
+- Most of the endpoint validation is done using validation pipes that come with NestJS
+- There is a custom one for credit card numbers which does a simple regex for a 16 digit string
+- Validation of the NewAccountDto is done using the ValidationPipe from Nest which makes use of the [class-validator](https://www.npmjs.com/package/class-validator) library
+
+#### Error Handling
+
+- The errors handled manually have descriptive strings that are stored as constants in `src/errors.ts`
+- Error codes have been added to them using the http exceptions and default global exception handler which are both of nest.
+
+#### Card Types
+
+- The card types are part of the CardDetails class
+
+#### Payment Gateway Integration
+
+- There is a payment gateway service which acts as a stub for real integration.
+- It returns a empty promise which in testing is mocked to throw errors to simulate a failure.
+
+#### Testing
+
+- There are two ways to run tests
+  - `npm test` runs the unit and integration tests under the `src/` folder which focus on functionality like the transactions, the encryption and that the searching of the database with the hash works.
+  - `npm test:e2e` runs the end to end tests that are in `test/app.e2e-spec.ts` which focus on integrations with Nest like validation.
+- There are some gaps in the testing
+  - ORM functions that have facades are not tested.
+  - Not all the endpoints and their validations are tested.
 
 ## Installation
 
@@ -58,16 +74,3 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
