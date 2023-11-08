@@ -9,7 +9,6 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Put,
   UseInterceptors,

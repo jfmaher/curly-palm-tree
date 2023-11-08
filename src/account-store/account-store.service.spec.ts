@@ -85,7 +85,7 @@ describe('AccountStoreService', () => {
     account.cardDetails.cardType = Type.MASTERCARD;
     account.cardDetails.cardholderName = 'joe bloggs';
 
-    const account1 = await service.save(account);
+    await service.save(account);
 
     const foundAccount = await service.getByCardNo(cardNo);
 

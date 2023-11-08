@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EncryptionService } from './encryption.service';
-import { open } from 'node:fs/promises';
 
 describe('EncryptionService', () => {
   let service: EncryptionService;
