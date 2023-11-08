@@ -51,6 +51,7 @@ describe('AccountStoreService', () => {
     account.cardDetails = new CardDetails();
     account.cardDetails.cardNo = `${cardNo}`;
     account.cardDetails.cardType = Type.MASTERCARD;
+    account.cardDetails.cardholderName = 'joe bloggs';
 
     const account1 = await service.save(account);
 
@@ -80,6 +81,7 @@ describe('AccountStoreService', () => {
     account.cardDetails = new CardDetails();
     account.cardDetails.cardNo = `${cardNo}`;
     account.cardDetails.cardType = Type.MASTERCARD;
+    account.cardDetails.cardholderName = 'joe bloggs';
 
     const account1 = await service.save(account);
 

@@ -7,7 +7,7 @@ export default class Account {
   id: number;
 
   @Column('text')
-  name: string;
+  accountIdentifier: string;
 
   @Column('int')
   limit: number;

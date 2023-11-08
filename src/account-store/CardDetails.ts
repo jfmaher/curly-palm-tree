@@ -17,6 +17,9 @@ export class CardDetails {
   account?: Account;
 
   @Column('text')
+  cardholderName: string;
+
+  @Column('text')
   cardNo: string;
 
   @Column('blob')

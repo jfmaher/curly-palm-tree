@@ -27,8 +27,17 @@ export class AppController {
   ) {}
 
   @Post()
-  async createAccount(@Body(ValidationPipe) newAccount: NewAccountDto) {
-    await this.accountStoreService.save(newAccount);
+  async createAccount(
+    @Body(new ValidationPipe({ whitelist: true })) newAccount: NewAccountDto,
+  ) {
+    const { accountIdentifier, limit, cardNo, cardType, cardholderName } =
+      newAccount;
+    await this.accountStoreService.save({
+      accountIdentifier,
+      limit,
+      balance: 0,
+      cardDetails: { cardNo, cardType, cardholderName },
+    });
     return '';
   }
 

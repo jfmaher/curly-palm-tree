@@ -15,23 +15,40 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
+  afterEach(() => {
+    app.close();
+  });
+
   it('GET /credit-cards', () => {
     request(app.getHttpServer()).get('/credit-cards').expect(200);
   });
   describe('POST /credit-cards', () => {
-    it('fails validation', () => {
+    it('fails validation', (done) => {
+      request(app.getHttpServer())
+        .post('/credit-cards')
+        .send({
+          accountIdentifier: 'test',
+          limit: 1000,
+          cardNo: '4018888881881',
+          cardType: 'VISA',
+          cardholderName: 'Joe Bloggs',
+        })
+        .expect(400, done);
+    });
+    it('succeeds validation', (done) => {
       request(app.getHttpServer())
         .post('/credit-cards')
         .send({
           name: 'test',
           accountIdentifier: 'test',
           limit: 1000,
-          cardNo: '4018888881881',
+          cardNo: '4012888888881881',
+          cardholderName: 'Joe Bloggs',
           cardType: 'VISA',
         })
-        .expect(400);
+        .expect(201, done);
     });
-    it('succeeds validation', () => {
+    it('fails validation because of property missing', (done) => {
       request(app.getHttpServer())
         .post('/credit-cards')
         .send({
@@ -41,7 +58,19 @@ describe('AppController (e2e)', () => {
           cardNo: '4012888888881881',
           cardType: 'VISA',
         })
-        .expect(200);
+        .expect(400, done);
+    });
+    it('fails validation because of negative limit', (done) => {
+      request(app.getHttpServer())
+        .post('/credit-cards')
+        .send({
+          name: 'test',
+          accountIdentifier: 'test',
+          limit: -50,
+          cardNo: '4012888888881881',
+          cardType: 'VISA',
+        })
+        .expect(400, done);
     });
   });
   it.todo('GET /credit-cards/:id');
