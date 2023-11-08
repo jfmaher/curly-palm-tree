@@ -1,0 +1,51 @@
+POST http://localhost:3000/credit-cards/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "accountIdentifier": "hello",
+    "limit": 1000,
+    "cardholderName": "Joe Bloggs",
+    "cardNo": "4012888888881881",
+    "cardType": "VISA"
+}
+
+###
+
+GET http://localhost:3000/credit-cards/
+Accept: application/json
+
+###
+
+PUT http://localhost:3000/credit-cards/3
+Content-Type: application/json
+
+{
+  "accountIdentifier": "hello",
+  "limit": 1000,
+  "cardholderName": "Joe Bloggs",
+  "cardNo": "4012888888881881",
+  "cardType": "MASTERCARD"
+}
+
+###
+
+POST http://localhost:3000/credit-cards/4012888888881881/charge
+Accept: application/json
+Content-Type: application/json
+
+{
+    "amount": 50
+}
+
+###
+
+POST http://localhost:3000/credit-cards/4012888888881881/credit
+Accept: application/json
+Content-Type: application/json
+
+{
+  "amount": 25
+}
+
+###
