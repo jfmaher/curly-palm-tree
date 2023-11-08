@@ -61,7 +61,7 @@ export class AccountStoreService {
     );
     const account = cardDetails.account;
     account.cardDetails = cardDetails;
-    debugger;
+    delete account.cardDetails.account;
     return account;
   }
 }

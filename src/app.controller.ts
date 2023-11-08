@@ -55,7 +55,6 @@ export class AppController {
   }
 
   @Put('/:id')
-  @Patch('/:id')
   async updateAccount(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) newAccount: NewAccountDto,
@@ -64,7 +63,15 @@ export class AppController {
     if (account === null) {
       throw new NotFoundException(errors.AccountDoesNotExist);
     }
-    return this.accountStoreService.save({ ...newAccount, id });
+    const { accountIdentifier, limit, cardNo, cardType, cardholderName } =
+      newAccount;
+    await this.accountStoreService.save({
+      id,
+      accountIdentifier,
+      limit,
+      cardDetails: { cardNo, cardType, cardholderName },
+    });
+    return '';
   }
 
   @Delete('/:id')
@@ -93,7 +100,8 @@ export class AppController {
       throw new InternalServerErrorException(errors.PaymentGatewayFailure);
     }
     account.balance += amount;
-    return this.accountStoreService.save(account);
+    await this.accountStoreService.save(account);
+    return { newBalance: account.balance };
   }
 
   @Post('/:cardNumber/credit')
@@ -107,6 +115,7 @@ export class AppController {
     if (account.balance < 0)
       throw new BadRequestException(errors.AttemptingToOverpayBalance);
 
-    return this.accountStoreService.save(account);
+    await this.accountStoreService.save(account);
+    return { newBalance: account.balance };
   }
 }
