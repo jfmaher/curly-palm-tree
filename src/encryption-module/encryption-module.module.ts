@@ -9,6 +9,7 @@ import { open } from 'node:fs/promises';
       useFactory: async () => {
         const file = await open('./encryption.key');
         const key = await file.readFile('utf-8');
+        await file.close();
         return new Uint8Array(Buffer.from(key, 'base64'));
       },
     },
